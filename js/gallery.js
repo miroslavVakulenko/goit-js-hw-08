@@ -63,3 +63,58 @@ const images = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const gallery = document.querySelector('.gallery');
+let modalImg;
+
+function createMarkup(images) {
+  return images
+    .map(
+      ({ preview, original, description }) =>
+        `<li class="gallery-item">
+  <a class="gallery-link" href="large-image.jpg">
+    <img
+      class="gallery-image"
+      src="${preview}"
+      data-source="${original}"
+      alt="${description}"
+      width=360
+      height=200
+    />
+  </a>
+</li>`
+    )
+    .join('');
+}
+
+gallery.insertAdjacentHTML('beforeend', createMarkup(images));
+// gallery.innerHTML = createMarkup(images);
+
+const items = gallery.querySelector('.gallery');
+
+gallery.addEventListener('click', event => {
+  event.preventDefault();
+  if (event.target === event.currentTarget) {
+    return;
+  }
+
+  const hrefImg = event.target.dataset.source;
+  console.log(hrefImg);
+
+  const productInfo = images.find(image => image.original === hrefImg);
+  console.log(productInfo);
+
+  modalImg = basicLightbox.create(
+    `<div class="modal">
+      <img src="${hrefImg}" alt="${productInfo.description}">
+    </div>`
+  );
+  modalImg.show();
+});
+
+document.addEventListener('keyup', ({ code }) => {
+  // деструктуризуємо event
+  if (code === 'Escape') {
+    modalImg.close();
+  }
+});
